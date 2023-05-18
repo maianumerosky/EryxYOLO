@@ -1,0 +1,18 @@
+# dataset images folder
+images: data/headliners/images/
+# images: dataset/NWPU VHR-10 dataset/positive image set/
+
+# dataset labels folder
+labels: data/headliners/labels/
+# labels: dataset/NWPU VHR-10 dataset/ground truth/
+
+# class names
+class_names: ["fondo",
+"metal_1",
+"metal_2",
+"metal_alargado",
+"plastico_der",
+"plastico_izq",
+"sonrisa_chica",
+"sonrisa_grande",
+"sticker"]
