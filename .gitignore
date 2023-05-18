@@ -1,0 +1,10 @@
+# Ignore cache and temporary files
+*.pyc
+*.pyo
+__pycache__/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Data
+data/
