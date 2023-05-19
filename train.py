@@ -90,6 +90,55 @@ def test(model, test_loader, device, S, B):
     print('Test set: Average loss: {:.4f}'.format(test_loss))
 
 
+def main(cfg="cfg/yolov1.yaml", dataset_cfg="cfg/dataset.yaml", weights="", output="output", epochs=100, lr=0.002, batch_size=32, save_freq=10):
+    
+    # create output file folder
+    start = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
+    output_path = os.path.join(output, start)
+    os.makedirs(output_path)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # build model
+    torch.manual_seed(1)
+    model = build_model(weights, S, B, num_classes).to(device)
+
+    # get data loader
+    train_loader, val_loader, test_loader = create_dataloader(img_path, label_path, 0.8, 0.1, 0.1, batch_size,
+                                                              input_size, S, B, num_classes)
+
+    optimizer = SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=0.0005)
+    # optimizer = Adam(model.parameters(), lr=lr)
+
+    train_loss_lst, val_loss_lst = [], []
+
+    # train epoch
+    for epoch in range(epochs):
+        train_loss_lst = train(model, train_loader, optimizer, epoch, device, S, B, train_loss_lst, output_path)
+        val_loss_lst = validate(model, val_loader, device, S, B, val_loss_lst)
+
+        # save model weight every save_freq epoch
+        if epoch % save_freq == 0 and epoch >= epochs / 2:
+            torch.save(model.state_dict(), os.path.join(output_path, 'epoch' + str(epoch) + '.pth'))
+
+    test(model, test_loader, device, S, B)
+
+    # save model
+    torch.save(model.state_dict(), os.path.join(output_path, 'last.pth'))
+
+    # plot loss, save params change
+    fig = plt.figure()
+    plt.plot(range(epochs), train_loss_lst, 'g', label='train loss')
+    plt.plot(range(epochs), val_loss_lst, 'k', label='val loss')
+    plt.grid(True)
+    plt.xlabel('epoch')
+    plt.ylabel('acc-loss')
+    plt.legend(loc="upper right")
+    plt.savefig(os.path.join(output_path, 'loss_curve.jpg'))
+    plt.show()
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='YOLOv1-pytorch')
