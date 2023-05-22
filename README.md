@@ -1,6 +1,13 @@
 # yolov1-pytorch
 
-This repo is a pytorch implementation of yolov1.
+This repo is a fork from [https://github.com/ivanwhaf/yolov1-pytorch], which is a pytorch implementation of yolov1.
+
+The aim of our project is to get our own implementation up and running and train it in our own dataset.
+
+
+<!-->
+Readme of the original Project at https://github.com/ivanwhaf/yolov1-pytorch
+
 
 * Deep Learning based yolov1 object detector, using `Pytorch` deep learning framework
 * This project can be also transplanted to other edge platforms like `Raspberry Pi`

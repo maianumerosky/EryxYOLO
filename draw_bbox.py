@@ -67,3 +67,31 @@ def draw_grid_bbox(grid_labels, ax):
         ax.plot([x0,x1], [y0, y0], c = "y")
         ax.plot([x0,x1], [y1, y1], c = "y")
         ax.text(x0,y1+ 20, f"{object_class_name} {confidence.item()}")
+
+
+def draw_prediction_grid_bbox(grid_labels, ax, threshold = 0.5):
+    """
+    Draws the bounding box for a single grid cell of a prediction. Takes the grid labels in the format 2B + C and an axes object. Checks which box to draw. Draws the box and writes the class and confidence.
+    """
+    bbox_index = 0
+    if grid_labels[4] <= grid_labels[9]:
+        bbox_index = 5 
+    x = grid_labels[bbox_index] * 448
+    y = grid_labels[bbox_index+1] * 448
+    w = grid_labels[bbox_index+2] * 448
+    h = grid_labels[bbox_index+3] * 448
+
+    confidence = grid_labels[bbox_index+4]
+    object_class = grid_labels[10:]
+    x0 = x - w/2
+    x1 = x + w/2
+    y0 = y - h/2
+    y1 = y + h/2
+
+    object_class_name = get_object_class(object_class)
+    if confidence > threshold:
+        ax.plot([x0,x0], [y0, y1], c = "y")
+        ax.plot([x1,x1], [y0, y1], c = "y")
+        ax.plot([x0,x1], [y0, y0], c = "y")
+        ax.plot([x0,x1], [y1, y1], c = "y")
+        ax.text(x0,y1+ 20, f"{object_class_name} {confidence.item()}")
