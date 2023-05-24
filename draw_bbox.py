@@ -14,6 +14,9 @@ class_dict ={0:"fondo",
 7:"sonrisa_grande",
 8:"sticker"}
 
+
+#Class_dict esta muy mal hardcodeado
+
 def get_object_class(class_tensor, class_dict):
     """
     Given a tensor with the class probabilities, returns a string with the name of the most likely class
