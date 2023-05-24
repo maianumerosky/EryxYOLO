@@ -14,7 +14,7 @@ class_dict ={0:"fondo",
 7:"sonrisa_grande",
 8:"sticker"}
 
-def get_object_class(class_tensor):
+def get_object_class(class_tensor, class_dict):
     """
     Given a tensor with the class probabilities, returns a string with the name of the most likely class
     """
@@ -25,7 +25,7 @@ def get_object_class(class_tensor):
 def torch_to_pil(img):
   return torchvision.transforms.ToPILImage()(img).convert('RGB')
 
-def draw_img_and_bbox_from_true_labels(img, labels):
+def draw_img_and_bbox_from_true_labels(img, labels, class_dict = class_dict):
     """
     Takes img and labels from the dataset class and draws a PIL image with the bounding boxes for the labeled data.
     """
@@ -41,10 +41,10 @@ def draw_img_and_bbox_from_true_labels(img, labels):
     for i in range(7):
         for j in range(7):
             grid_labels = labels[i,j,:]
-            draw_grid_bbox(grid_labels, ax)
+            draw_grid_bbox(grid_labels, ax, class_dict)
             
             
-def draw_grid_bbox(grid_labels, ax):
+def draw_grid_bbox(grid_labels, ax, class_dict = class_dict):
     """
     Draws the true bounding box for a single grid cell. Takes the grid labels in the format 2B + C and an axes object. Draws the box and writes the class and confidence.
     """
@@ -60,7 +60,7 @@ def draw_grid_bbox(grid_labels, ax):
     y0 = y - h/2
     y1 = y + h/2
 
-    object_class_name = get_object_class(object_class)
+    object_class_name = get_object_class(object_class, class_dict)
     if confidence > 0.5:
         ax.plot([x0,x0], [y0, y1], c = "y")
         ax.plot([x1,x1], [y0, y1], c = "y")
@@ -69,7 +69,7 @@ def draw_grid_bbox(grid_labels, ax):
         ax.text(x0,y1+ 20, f"{object_class_name} {confidence.item()}")
 
 
-def draw_prediction_grid_bbox(grid_labels, ax, threshold = 0.5):
+def draw_prediction_grid_bbox(grid_labels, ax, threshold = 0.5, class_dict = class_dict):
     """
     Draws the bounding box for a single grid cell of a prediction. Takes the grid labels in the format 2B + C and an axes object. Checks which box to draw. Draws the box and writes the class and confidence.
     """
@@ -88,7 +88,7 @@ def draw_prediction_grid_bbox(grid_labels, ax, threshold = 0.5):
     y0 = y - h/2
     y1 = y + h/2
 
-    object_class_name = get_object_class(object_class)
+    object_class_name = get_object_class(object_class, class_dict)
     if confidence > threshold:
         ax.plot([x0,x0], [y0, y1], c = "y")
         ax.plot([x1,x1], [y0, y1], c = "y")
