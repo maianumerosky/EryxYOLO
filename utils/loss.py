@@ -59,7 +59,7 @@ class YOLOv1Loss(nn.Module):
                             # loss_obj += (preds[i, y, x, 4] - 1) ** 2
 
                             # no obj confidence loss
-                            loss_no_obj += 0.5 * ((0 - preds[i, y, x, 9]) ** 2)
+                            #loss_no_obj += 0.5 * ((0 - preds[i, y, x, 9]) ** 2)
                             # loss_no_obj += 0.5 * ((preds[i, y, x, 9] - 0) ** 2)
                         else:
                             # coord xy loss
@@ -73,7 +73,7 @@ class YOLOv1Loss(nn.Module):
                             # loss_obj += (preds[i, y, x, 9] - 1) ** 2
 
                             # no obj confidence loss
-                            loss_no_obj += 0.5 * ((0 - preds[i, y, x, 4]) ** 2)
+                            #loss_no_obj += 0.5 * ((0 - preds[i, y, x, 4]) ** 2)
                             # loss_no_obj += 0.5 * ((preds[i, y, x, 4] - 0) ** 2)
 
                         # class loss

@@ -1,5 +1,6 @@
 from torch import nn
 from torchvision.models import resnet34, resnet18
+from torchvision.models import ResNet18_Weights
 
 class YOLOResNetFullyConnected(nn.Module):
     """YOLOv1-Resnet model structure
@@ -11,7 +12,7 @@ class YOLOResNetFullyConnected(nn.Module):
         self.S = S
         self.B = B
         self.num_classes = num_classes
-        self.resnet = resnet18()
+        self.resnet = resnet18(weights = ResNet18_Weights.IMAGENET1K_V1) 
         #self.resnet = resnet34()
 
         #Esto estaria bueno tenerlo en un module aparte
