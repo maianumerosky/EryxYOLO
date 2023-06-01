@@ -25,7 +25,7 @@ class YOLOResNetFullyConnected(nn.Module):
         # full connection part
         self.fc_layers = nn.Sequential(
             nn.Linear(14 * 14 * 512, 4096),
-            nn.LeakyReLU(0.1, inplace=True),
+            nn.LeakyReLU(0.1),#, inplace=True),
             nn.Linear(4096, self.S * self.S * (self.B * 5 + self.num_classes)),
             nn.Sigmoid()  # normalized to 0~1
         )

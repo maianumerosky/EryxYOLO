@@ -120,43 +120,44 @@ def nms(bboxs, num_classes, conf_thresh=0.1, iou_thresh=0.3):
     return ret
 
 
+#def calculate_iou(bbox1, bbox2):
+    # x1, y1, w1, h1 = bbox1[0], bbox1[1], bbox1[2], bbox1[3]
+    # x2, y2, w2, h2 = bbox2[0], bbox2[1], bbox2[2], bbox2[3]
+
+    # area1 = w1 * h1  # bbox1's area
+    # area2 = w2 * h2  # bbox2's area
+
+    # max_left = torch.max(x1 - w1 / 2, x2 - w2 / 2)
+    # min_right = torch.min(x1 + w1 / 2, x2 + w2 / 2)
+    # max_top = torch.max(y1 - h1 / 2, y2 - h2 / 2)
+    # min_bottom = torch.min(y1 + h1 / 2, y2 + h2 / 2)
+
+    # if max_left >= min_right or max_top >= min_bottom:
+    #     return 0
+    # else:
+    #     intersect = (min_right - max_left) * (min_bottom - max_top)
+    #     return intersect / (area1 + area2 - intersect)
+
+#Old code. Pasaba todo a numpy no se porque.
 def calculate_iou(bbox1, bbox2):
-    x1, y1, w1, h1 = bbox1[0], bbox1[1], bbox1[2], bbox1[3]
-    x2, y2, w2, h2 = bbox2[0], bbox2[1], bbox2[2], bbox2[3]
+    # bbox: x y w h
+    bbox1, bbox2 = bbox1.cpu().detach().numpy().tolist(), bbox2.cpu().detach().numpy().tolist()
 
-    area1 = w1 * h1  # bbox1's area
-    area2 = w2 * h2  # bbox2's area
+    area1 = bbox1[2] * bbox1[3]  # bbox1's area
+    area2 = bbox2[2] * bbox2[3]  # bbox2's area
 
-    max_left = torch.max(x1 - w1 / 2, x2 - w2 / 2)
-    min_right = torch.min(x1 + w1 / 2, x2 + w2 / 2)
-    max_top = torch.max(y1 - h1 / 2, y2 - h2 / 2)
-    min_bottom = torch.min(y1 + h1 / 2, y2 + h2 / 2)
+    max_left = max(bbox1[0] - bbox1[2] / 2, bbox2[0] - bbox2[2] / 2)
+    min_right = min(bbox1[0] + bbox1[2] / 2, bbox2[0] + bbox2[2] / 2)
+    max_top = max(bbox1[1] - bbox1[3] / 2, bbox2[1] - bbox2[3] / 2)
+    min_bottom = min(bbox1[1] + bbox1[3] / 2, bbox2[1] + bbox2[3] / 2)
 
     if max_left >= min_right or max_top >= min_bottom:
         return 0
     else:
+        smooth = 1e-6
+        # iou = intersect / union
         intersect = (min_right - max_left) * (min_bottom - max_top)
-        return intersect / (area1 + area2 - intersect)
-
-#Old code. Pasaba todo a numpy no se porque.
-# def calculate_iou(bbox1, bbox2):
-#     # bbox: x y w h
-#     bbox1, bbox2 = bbox1.cpu().detach().numpy().tolist(), bbox2.cpu().detach().numpy().tolist()
-
-#     area1 = bbox1[2] * bbox1[3]  # bbox1's area
-#     area2 = bbox2[2] * bbox2[3]  # bbox2's area
-
-#     max_left = max(bbox1[0] - bbox1[2] / 2, bbox2[0] - bbox2[2] / 2)
-#     min_right = min(bbox1[0] + bbox1[2] / 2, bbox2[0] + bbox2[2] / 2)
-#     max_top = max(bbox1[1] - bbox1[3] / 2, bbox2[1] - bbox2[3] / 2)
-#     min_bottom = min(bbox1[1] + bbox1[3] / 2, bbox2[1] + bbox2[3] / 2)
-
-#     if max_left >= min_right or max_top >= min_bottom:
-#         return 0
-#     else:
-#         # iou = intersect / union
-#         intersect = (min_right - max_left) * (min_bottom - max_top)
-#         return intersect / (area1 + area2 - intersect)
+        return intersect / (area1 + area2 - intersect + smooth)
 
 
 def parse_cfg(cfg_path):

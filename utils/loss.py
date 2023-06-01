@@ -24,16 +24,6 @@ class YOLOv1Loss(nn.Module):
                 for x in range(self.S):
                     # this region has object
                     if labels[i, y, x, 4] == 1:
-                        # convert x,y to x,y
-                        # pred_bbox1 = torch.Tensor(
-                        #     [(preds[i, x, y, 0] + x) / 7, (preds[i, x, y, 1] + y) / 7, preds[i, x, y, 2],
-                        #      preds[i, x, y, 3]])
-                        # pred_bbox2 = torch.Tensor(
-                        #     [(preds[i, x, y, 5] + x) / 7, (preds[i, x, y, 6] + y) / 7, preds[i, x, y, 7],
-                        #      preds[i, x, y, 8]])
-                        # label_bbox = torch.Tensor(
-                        #     [(labels[i, x, y, 0] + x) / 7, (labels[i, x, y, 1] + y) / 7, labels[i, x, y, 2],
-                        #      labels[i, x, y, 3]])
 
                         pred_bbox1 = torch.Tensor(
                             [preds[i, y, x, 0], preds[i, y, x, 1], preds[i, y, x, 2], preds[i, y, x, 3]])
@@ -45,7 +35,7 @@ class YOLOv1Loss(nn.Module):
                         # calculate iou of two bbox
                         iou1 = calculate_iou(pred_bbox1, label_bbox)
                         iou2 = calculate_iou(pred_bbox2, label_bbox)
-
+                        
                         # judge responsible box
                         if iou1 > iou2:
                             # calculate coord xy loss
@@ -55,7 +45,7 @@ class YOLOv1Loss(nn.Module):
                             loss_coord_wh += torch.sum((labels[i, y, x, 2:4].sqrt() - preds[i, y, x, 2:4].sqrt()) ** 2)
 
                             # obj confidence loss
-                            loss_obj += (iou1 - preds[i, y, x, 4]) ** 2
+                            loss_obj += (1. - preds[i, y, x, 4]) ** 2 #(iou1 - preds[i, y, x, 4]) ** 2
                             # loss_obj += (preds[i, y, x, 4] - 1) ** 2
 
                             # no obj confidence loss
@@ -69,7 +59,7 @@ class YOLOv1Loss(nn.Module):
                             loss_coord_wh += torch.sum((labels[i, y, x, 7:9].sqrt() - preds[i, y, x, 7:9].sqrt()) ** 2)
 
                             # obj confidence loss
-                            loss_obj += (iou2 - preds[i, y, x, 9]) ** 2
+                            loss_obj += (1. - preds[i, y, x, 9]) ** 2 #(iou2 - preds[i, y, x, 9]) ** 2
                             # loss_obj += (preds[i, y, x, 9] - 1) ** 2
 
                             # no obj confidence loss

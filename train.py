@@ -22,8 +22,10 @@ def train(model, train_loader, optimizer, epoch, device, S, B, train_loss_lst, o
 
         # back prop
         criterion = YOLOv1Loss(S, B)
-        loss = criterion(outputs, labels)
         optimizer.zero_grad()
+        
+        loss = criterion(outputs, labels)
+        
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
